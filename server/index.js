@@ -38,8 +38,7 @@ app.use('/api/:route', function (req, res, next) {
   if (req.params.route !== 'adlog' &&
       req.params.route !== 'get_users' &&
       req.params.route !== 'login' &&
-      req.params.route !== 'getpending' &&
-      req.params.route !== 'setpending') {
+      req.params.route !== 'status') {
     getAdminTokens(function (err, tokenArray) {
       if (err) { res.status(500); return res.send(err) }
       if (!req.query.token) {
