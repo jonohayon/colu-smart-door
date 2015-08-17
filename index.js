@@ -400,7 +400,8 @@ mongoose.connection.on('open', function () {
       console.log('Admin token(s):', token)
       var colu_settings = {
         network: 'mainnet',
-        privateSeed: process.env.PRIVATE_SEED || null,
+        // privateSeed: process.env.PRIVATE_SEED || null,
+        privateSeed: null,
         companyName: 'Smart Door',
         apiKey: process.env.API_KEY
       }
@@ -408,6 +409,7 @@ mongoose.connection.on('open', function () {
         System.findOne({userName: 'coluadmin'}, function (err, system) {
           if (err) return console.log(err)
           if (system && system.privateSeed) colu_settings.privateSeed = system.privateSeed
+          if (!system) system = new System({userName: 'coluadmin'})
           coluAccess = new ColuAccess(colu_settings)
           system.privateSeed = coluAccess.colu.hdwallet.getPrivateSeed()
           system.save(function (err) {
