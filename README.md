@@ -13,8 +13,6 @@ The colu smart door project is literally, a smart door powered by the Colu platf
 There's no need to sign up, just follow the tutorial!
 
 #Tutorial
-----------
-
 
 ####Before we start...
 The code for the Raspberry Pi is written in Python and the server code is written in NodeJS. There's no need to install neither of them (if you deploy to Heroku and not to your VPS or something else) because Heroku will install Node for you and Python is already on the Pi.
