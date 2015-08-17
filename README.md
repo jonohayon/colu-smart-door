@@ -1,5 +1,8 @@
 #Colu Smart Door
 
+####Disclaimer
+This guide is still WIP, so it's not complete yet.
+
 ####What is this thing?
 The colu smart door project is literally, a smart door powered by the Colu platform.
 
