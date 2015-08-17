@@ -1,0 +1,11 @@
+<div class="container" ng-controller="qrCtrl">
+  <input type="text" placeholder="First Name" ng-model="firstName" />
+  <input type="text" placeholder="Last Name" ng-model="lastName" />
+  <input type="text" placeholder="Phone number" ng-model="phoneNumber" />
+  <input type="email" placeholder="Email address" ng-model="email" />
+  <input type="text" placeholder="Username" ng-model="username" />
+  <input type="text" placeholder="Type" ng-model="type" />
+  <button ng-click="register()">Register</button>
+  <button ng-click="login()">Login</button>
+  <img ng-src="{{ qrCode }}" width="200" height="200" />
+</div>

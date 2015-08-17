@@ -1,0 +1,13 @@
+<div layout-padding ng-controller="intercomCtrl">
+  <md-list>
+    <md-subheader>Choose the user that you want to meet</md-subheader>
+    <div ng-repeat="user in users">
+      <md-list-item class="md-1-line" ng-click="ring($event, user)" ng-show="{{ user.type !== 'admin' }}">
+        <div class="md-list-item-text">
+          <h3>{{ user.firstName }} {{ user.lastName }}</h3>
+        </div>
+      </md-list-item>
+      <md-divider ng-show="{{ user.type !== 'admin' }}"></md-divider>
+    </div>
+  </md-list>
+</div>
