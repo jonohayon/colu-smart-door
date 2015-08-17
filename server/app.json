@@ -1,7 +1,0 @@
-{
-  "name": "Colu smart door server",
-  "description": "The colu smart door server",
-  "repository": "https://github.com/rezozo/colu-smart-door-server",
-  "logo": "https://node-js-sample.herokuapp.com/node.svg",
-  "keywords": ["node", "express", "colu", "smart door", "colu-smart-door"]
-}
