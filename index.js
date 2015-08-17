@@ -27,6 +27,54 @@ var options = {
   pass: dbPass
 }
 
+function getAdminTokens (cb) {
+  var arr = []
+  User.find({ type: 'admin' }, function (err, admins) {
+    if (err) return cb(err)
+    for (var i in admins) {
+      var admin = admins[i]
+      arr.push(SHA1(admin.assetId + admin._id))
+    }
+    cb(null, arr)
+  })
+}
+
+function getOneAdminToken (username, cb) {
+  User.findOne({ type: 'admin', username: username }, function (err, admin) {
+    if (err) return cb(err)
+    cb(null, SHA1(admin.assetId + admin._id))
+  })
+}
+
+var userSchema = new mongoose.Schema({
+  firstName: String,
+  lastName: String,
+  phone: String,
+  email: String,
+  type: { type: String, default: 'user' },
+  username: { type: String, required: false },
+  assetId: { type: String, required: false }
+})
+var User = mongoose.model('User', userSchema)
+
+var entranceSchema = new mongoose.Schema({
+  firstName: String,
+  lastName: String,
+  date: Date,
+  result: String,
+  username: String
+})
+var Entrance = mongoose.model('Entrance', entranceSchema)
+
+var colu_settings = {
+  network: 'mainnet',
+  privateSeed: 'eff6331890f813240fa5f0d896b7f013ccb6db81fb9e2a2c5bfb9bb60452e509',
+  companyName: 'Smart Door',
+  apiKey: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJqb25hdGhhbm8iLCJleHAiOiIyMDE1LTA5LTEwVDAzOjMyOjIxLjg2N1oifQ.UF4FHrgj_I1FBpe81ZcMRD8EfdGmBqqZ_ar0lS_VIqM'
+}
+
+var coluAccess = new ColuAccess(colu_settings)
+
 app.use(bodyParser.json())
 app.set('view engine', 'hjs')
 app.use(function (req, res, next) {
@@ -62,6 +110,7 @@ app.use('/api/:route', function (req, res, next) {
     next()
   }
 })
+
 app.use('/qr', function (req, res, next) {
   getAdminTokens(function (err, tokenArray) {
     if (err) { res.status(500); return res.send(err) }
@@ -82,6 +131,7 @@ app.use('/qr', function (req, res, next) {
     }
   })
 })
+
 app.use('/list', function (req, res, next) {
   getAdminTokens(function (err, tokenArray) {
     if (err) { res.status(500); return res.send(err) }
@@ -102,53 +152,6 @@ app.use('/list', function (req, res, next) {
     }
   })
 })
-
-mongoose.connect(dbURI, options)
-
-function getAdminTokens (cb) {
-  var arr = []
-  User.find({ type: 'admin' }, function (err, admins) {
-    if (err) return cb(err)
-    for (var i in admins) {
-      var admin = admins[i]
-      arr.push(SHA1(admin.assetId + admin._id))
-    }
-    cb(null, arr)
-  })
-}
-
-function getOneAdminToken (username, cb) {
-  User.findOne({ type: 'admin', username: username }, function (err, admin) {
-    if (err) return cb(err)
-    cb(null, SHA1(admin.assetId + admin._id))
-  })
-}
-
-var userSchema = new mongoose.Schema({
-  firstName: String,
-  lastName: String,
-  phone: String,
-  email: String,
-  type: { type: String, default: 'user' },
-  username: { type: String, required: false },
-  assetId: { type: String, required: false }
-})
-var User = mongoose.model('User', userSchema)
-
-var colu_settings = {
-  network: 'mainnet',
-  privateSeed: 'eff6331890f813240fa5f0d896b7f013ccb6db81fb9e2a2c5bfb9bb60452e509',
-  companyName: 'Smart Door',
-  apiKey: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJqb25hdGhhbm8iLCJleHAiOiIyMDE1LTA5LTEwVDAzOjMyOjIxLjg2N1oifQ.UF4FHrgj_I1FBpe81ZcMRD8EfdGmBqqZ_ar0lS_VIqM'
-}
-
-var coluAccess = new ColuAccess(colu_settings)
-
-function coluInit () {
-  coluAccess.init(function () {
-    console.log('ColuAccess initialized')
-  })
-}
 
 app.get('/api/status', function (req, res) {
   if (status === 'pending') {
@@ -281,14 +284,28 @@ app.post('/api/adlog', function (req, res) {
  */
 app.post('/api/login', function (req, res) {
   var body = req.body
+  var date = new Date()
   User.findOne({ firstName: body.userName.split(' ')[0], lastName: body.userName.split(' ')[1] }, function (err, user) {
     if (err) return res.send(err, 500)
     var userName = user.firstName + ' ' + user.lastName
     console.log(user)
     coluAccess.verifyUser(userName, user.assetId, function (err, data) {
-      if (err) { res.status(500); return res.send(err) }
+      var entrance = new Entrance({
+        firstName: user.firstName,
+        lastName: user.lastName,
+        date: date,
+        result: false,
+        username: body.userName
+      })
+      if (err) {
+        res.status(500)
+        entrance.save()
+        return res.send(err)
+      }
       if (data && data !== undefined && data !== null && data !== '') {
         status = 'pending'
+        entrance.result = true
+        entrance.save()
         res.json({ message: 'User verified', data: data, user: user })
       }
     })
@@ -387,9 +404,11 @@ mongoose.connection.on('open', function () {
     getOneAdminToken(admin.username, function (err, token) {
       if (err) throw err
       console.log('Admin token(s):', token)
-      coluInit()
-      app.listen(process.env.PORT || 5000, function () {
-        console.log('Listening on port', process.env.PORT || 5000)
+      coluAccess.init(function () {
+        console.log('ColuAccess initialized')
+        app.listen(process.env.PORT || 5000, function () {
+          console.log('Listening on port', process.env.PORT || 5000)
+        })
       })
     })
   })
@@ -398,3 +417,5 @@ mongoose.connection.on('open', function () {
 mongoose.connection.on('error', function (err) {
   console.log('err', err)
 })
+
+mongoose.connect(dbURI, options)
