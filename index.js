@@ -68,9 +68,9 @@ var Entrance = mongoose.model('Entrance', entranceSchema)
 
 var colu_settings = {
   network: 'mainnet',
-  privateSeed: 'eff6331890f813240fa5f0d896b7f013ccb6db81fb9e2a2c5bfb9bb60452e509',
+  privateSeed: process.env.PRIVATE_SEED,
   companyName: 'Smart Door',
-  apiKey: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJqb25hdGhhbm8iLCJleHAiOiIyMDE1LTA5LTEwVDAzOjMyOjIxLjg2N1oifQ.UF4FHrgj_I1FBpe81ZcMRD8EfdGmBqqZ_ar0lS_VIqM'
+  apiKey: process.env.API_KEY
 }
 
 var coluAccess = new ColuAccess(colu_settings)
