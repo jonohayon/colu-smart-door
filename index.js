@@ -390,11 +390,7 @@ app.post('/api/signup', function (req, res) {
 mongoose.connection.on('open', function () {
   console.log('Connected to DB')
   User.findOne({
-    firstName: 'Emmet',
-    lastName: 'Brown',
-    type: 'admin',
-    username: 'coluadmin',
-    email: 'jonathan@colu.co'
+    type: 'admin'
   }, function (err, admin) {
     if (err) throw err
     console.log('Admin found in DB, continuing...')
