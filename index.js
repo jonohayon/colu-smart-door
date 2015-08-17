@@ -61,7 +61,7 @@ var entranceSchema = new mongoose.Schema({
   firstName: String,
   lastName: String,
   date: Date,
-  result: String,
+  result: Boolean,
   username: String
 })
 var Entrance = mongoose.model('Entrance', entranceSchema)
