@@ -147,7 +147,7 @@ function addUserCtrl ($scope, $mdDialog, $http) {
 }
 
 function loadingCtrl ($scope, $http, $mdDialog) {
-  $http.post('/api/setpending', { userName: userDetails.firstName + ' ' + userDetails.lastName }).success(function (data, status, headers, config) {
+  $http.post('/api/login', { userName: userDetails.firstName + ' ' + userDetails.lastName }).success(function (data, status, headers, config) {
     console.log(data)
     $mdDialog.hide()
   })

@@ -6,7 +6,7 @@ var SHA1 = require('sha1')
 var path = require('path')
 var fs = require('fs')
 var app = express()
-var pendingUser = ''
+var status = 'closed'
 var dbUser = process.env.DB_USER
 var dbPass = process.env.DB_PASS
 var dbURI = process.env.DB_URI
@@ -142,22 +142,22 @@ var colu_settings = {
   companyName: 'Smart Door',
   apiKey: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJqb25hdGhhbm8iLCJleHAiOiIyMDE1LTA5LTEwVDAzOjMyOjIxLjg2N1oifQ.UF4FHrgj_I1FBpe81ZcMRD8EfdGmBqqZ_ar0lS_VIqM'
 }
+
 var coluAccess = new ColuAccess(colu_settings)
+
 function coluInit () {
   coluAccess.init(function () {
     console.log('ColuAccess initialized')
   })
 }
 
-app.get('/api/getpending', function (req, res) {
-  var tmp = pendingUser
-  pendingUser = ''
-  return res.send(tmp)
-})
-
-app.post('/api/setpending', function (req, res) {
-  pendingUser = req.body.userName
-  return res.send(200)
+app.get('/api/status', function (req, res) {
+  if (status === 'pending') {
+    status = 'open'
+    setTimeout(function () {status = 'closed'}, 5000)
+    return res.send('pending')
+  }
+  return res.send(status)
 })
 
 /**
@@ -289,6 +289,7 @@ app.post('/api/login', function (req, res) {
     coluAccess.verifyUser(userName, user.assetId, function (err, data) {
       if (err) { res.status(500); return res.send(err) }
       if (data && data !== undefined && data !== null && data !== '') {
+        status = 'pending'
         res.json({ message: 'User verified', data: data, user: user })
       }
     })
