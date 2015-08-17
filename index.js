@@ -400,8 +400,7 @@ mongoose.connection.on('open', function () {
       console.log('Admin token(s):', token)
       var colu_settings = {
         network: 'mainnet',
-        // privateSeed: process.env.PRIVATE_SEED || null,
-        privateSeed: null,
+        privateSeed: process.env.PRIVATE_SEED,
         companyName: 'Smart Door',
         apiKey: process.env.API_KEY
       }
@@ -415,7 +414,7 @@ mongoose.connection.on('open', function () {
           system.save(function (err) {
             if (err) return console.log(err)
             coluAccess.init(function () {
-              console.log('ColuAccess initialized')
+              console.log('ColuAccess initialized with seed:', coluAccess.colu.hdwallet.getPrivateSeed())
               app.listen(process.env.PORT || 5000, function () {
                 console.log('Listening on port', process.env.PORT || 5000)
               })
@@ -425,7 +424,7 @@ mongoose.connection.on('open', function () {
       } else {
         coluAccess = new ColuAccess(colu_settings)
         coluAccess.init(function () {
-          console.log('ColuAccess initialized')
+          console.log('ColuAccess initialized with seed:', coluAccess.colu.hdwallet.getPrivateSeed())
           app.listen(process.env.PORT || 5000, function () {
             console.log('Listening on port', process.env.PORT || 5000)
           })
