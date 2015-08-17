@@ -90,7 +90,7 @@ Now we can set up the server for our door!
 
 For this part, you will need an Heroku account. You can sign up [here](http://heroku.com).
 
-After you've lick on this button to deploy the newest version of the server scripts to a new Heroku instance:
+After you've signed up, click on this button to deploy the newest version of the server scripts to a new Heroku instance:
 
 [![Deploy](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy?template=https://github.com/rezozo/colu-smart-door/tree/master/)
 
