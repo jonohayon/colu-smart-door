@@ -10,6 +10,7 @@ var status = 'closed'
 var dbUser = process.env.DB_USER
 var dbPass = process.env.DB_PASS
 var dbURI = process.env.DB_URI
+var coluAccess
 var options = {
   server: {
     socketOptions: {
@@ -66,14 +67,11 @@ var entranceSchema = new mongoose.Schema({
 })
 var Entrance = mongoose.model('Entrance', entranceSchema)
 
-var colu_settings = {
-  network: 'mainnet',
-  privateSeed: process.env.PRIVATE_SEED,
-  companyName: 'Smart Door',
-  apiKey: process.env.API_KEY
-}
-
-var coluAccess = new ColuAccess(colu_settings)
+var systemSchema = new mongoose.Schema({
+  privateSeed: String,
+  adminName: String
+})
+var System = mongoose.model('System', systemSchema)
 
 app.use(bodyParser.json())
 app.set('view engine', 'hjs')
@@ -404,12 +402,37 @@ mongoose.connection.on('open', function () {
     getOneAdminToken(admin.username, function (err, token) {
       if (err) throw err
       console.log('Admin token(s):', token)
-      coluAccess.init(function () {
-        console.log('ColuAccess initialized')
-        app.listen(process.env.PORT || 5000, function () {
-          console.log('Listening on port', process.env.PORT || 5000)
+      var colu_settings = {
+        network: 'mainnet',
+        privateSeed: process.env.PRIVATE_SEED || null,
+        companyName: 'Smart Door',
+        apiKey: process.env.API_KEY
+      }
+      if (!colu_settings.privateSeed) {
+        System.findOne({userName: 'coluadmin'}, function (err, system) {
+          if (err) return console.log(err)
+          if (system && system.privateSeed) colu_settings.privateSeed = system.privateSeed
+          coluAccess = new ColuAccess(colu_settings)
+          system.privateSeed = coluAccess.colu.hdwallet.getPrivateSeed()
+          system.save(function (err) {
+            if (err) return console.log(err)
+            coluAccess.init(function () {
+              console.log('ColuAccess initialized')
+              app.listen(process.env.PORT || 5000, function () {
+                console.log('Listening on port', process.env.PORT || 5000)
+              })
+            })
+          })
         })
-      })
+      } else {
+        coluAccess = new ColuAccess(colu_settings)
+        coluAccess.init(function () {
+          console.log('ColuAccess initialized')
+          app.listen(process.env.PORT || 5000, function () {
+            console.log('Listening on port', process.env.PORT || 5000)
+          })
+        })
+      }
     })
   })
 })
