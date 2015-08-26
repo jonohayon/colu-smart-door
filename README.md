@@ -1,4 +1,5 @@
-#Colu Smart Door
+Colu Smart Door
+---
 
 ####Disclaimer
 This guide is still WIP, so it's not complete yet.
@@ -21,8 +22,9 @@ The code for the Raspberry Pi is written in Python and the server code is writte
 
  - Colu API key (you can get one [here](http://colu.co/getapikey))
  - Raspberry Pi
+ - SD Card for the Raspberry Pi (a regular one, not microSD)
  - 1x P2N2222A Transistor
- - 1x Relay
+ - 1x Relay ([this one]())
  - 1x Electric door strike
  - A few jumper wires
  - Soldering Iron and Soldering Wire
@@ -121,3 +123,34 @@ Done! The server is live now! You can now access your door's control panel like 
 So the Pi's software is very very very easy to use. Since there's an installer script on your server, the hardest part is the connection of the hardware.
 
 ####The elec. schematic
+![RasPi Elec. Schematic](http://i.imgur.com/pl3OGOc.png)
+
+And now with marks of each part:
+![RasPi Elec. Schematic w/Marks](https://www.evernote.com/shard/s471/sh/4a5db048-c0b2-4280-988e-44cd6495fb56/c7dfd0a417ddb99b/res/4cbaecf3-2044-4c19-b96a-fe7023e61caa/skitch.png?resizeSmall&width=832)
+
+FYI (and important) - this is a pushbutton representation (just the red lines, not the green ones):
+
+![Ignore the pushbutton](http://puu.sh/jP9TU/b21bdbe301.png)
+
+as for now, you can ignore it, there's no need for it at the moment.
+
+####What should I do with those schematics?
+Basically, after you've gathered all of the required parts, just solder them together accroding to the green lines in the shcematic (those are representation of wires).
+
+After you've done this, we're now ready to install all of the software!
+
+####Install the OS and setup internet connection
+For installing the OS - Adafruit has a great article [here](https://learn.adafruit.com/adafruit-raspberry-pi-lesson-1-preparing-and-sd-card-for-your-raspberry-pi/overview).
+
+For internet - I would recommend using WiFi (a tutorial on how to set it up [here](https://learn.adafruit.com/adafruits-raspberry-pi-lesson-3-network-setup/setting-up-wifi-with-occidentalis), again from the great Adafriut), but you can use Ethernet as well from model B and above (just plug the cable :P)
+
+After setting both of these up, we're ready to get started with the code!
+
+####Getting the code
+All of the code is hosted on your repository, so let's get it from there and install it onto the Pi!
+
+Now, if you've booted to the desktop, open the terminal. If not / you are using SSH, you're already in the terminal!
+
+From within the terminal, type: `wget http://smart-door.herokuapp.com/pi/installer -O install.sh`
+After it has been completed, type `sh install.sh` and follow the instructions on screen. What the script is doing is basically downloading the needed python scripts from your server and adding them to the Pi's queue for starting the scripts on every startup.
+After the script has finished, type `sudo reboot` and you're done! Now you have a fully-working smart door powered by the Blockchain!

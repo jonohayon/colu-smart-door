@@ -5,9 +5,9 @@
 ####################################
 
 getScript () {
-  a="$1/pi/py"
+  a="http://smart-door.herokuapp.com/pi/py"
   wget $a -O "door.py"
-  b="$1/pi/py2"
+  b="http://smart-door.herokuapp.com/pi/py2"
   wget $b -O "test.py"
   c=$(pwd)
   d="python $c/test.py"
