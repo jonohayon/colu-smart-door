@@ -17,20 +17,11 @@ done
 exit 0" > "/etc/rc.local"
 }
 
-installScript () {
-  while true; do
-    read -p "What is your server's URL (for getting the scripts)?  " url
-    case $url in
-      * ) getScript "$url"; break;;
-    esac
-  done
-}
-
 echo "Welcome to the Colu Smart Door Installer Script!"
 while true; do
   read -p "Would you like to install the scripts to your RPi?  " yn
   case $yn in
-    [Yy]* ) echo "Installing..."; installScript; break;;
+    [Yy]* ) echo "Installing..."; getScript; break;;
     [Nn]* ) echo "Bye Bye!"; break;;
     * ) echo "Please answer yes (y) or no (n)";;
   esac
