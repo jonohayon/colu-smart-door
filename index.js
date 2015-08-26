@@ -220,6 +220,23 @@ app.get('/templates/:filename', function (req, res) {
 })
 
 /**
+ * Pi scripts route
+ * Method: GET
+ * Param (string): filename - The file's name
+ */
+app.get('/pi/:filename', function (req, res) {
+  if (req.params.filename === 'install') {
+    res.sendFile(path.join(__dirname, 'public/python/install.sh'))
+  } else if (req.params.filename === 'py') {
+    res.sendFile(path.join(__dirname, 'public/python/door.py'))
+  } else if (req.params.filename === 'py2') {
+    res.sendFile(path.join(__dirname, 'public/python/test.py'))
+  } else {
+    res.send({ error: 'Could not find the requested file' })
+  }
+})
+
+/**
  * SVG route
  * Method: GET
  * Param (string): filename - The file's name
@@ -295,6 +312,7 @@ app.post('/api/login', function (req, res) {
         result: false,
         username: body.userName
       })
+      console.log(err, data)
       if (err) {
         res.status(500)
         entrance.save()

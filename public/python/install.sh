@@ -1,27 +1,29 @@
+#! /bin/bash
+
 ####################################
 # Colu Smart Door Installer Script #
 ####################################
 
-formatWifiTxt () {
-	ssid=$(awk '/ESSID: */' scan.txt)
-	arr=$(echo $ssid | tr ':' '\n')
-	for x in $arr; do
-		if [ "$x" != "ESSID" ]; then
-			l=${#x}
-			length=$((l = $l - 1))
-			finished=${x:1:length}
-			echo $length
-		fi
-	done
-}
-
-setupWifi () {
-	sudo iwlist wlan0 scan > scan.txt
-	formatWifiTxt
+getScript () {
+  a="$1/pi/py"
+  wget $a -O "door.py"
+  b="$1/pi/py2"
+  wget $b -O "test.py"
+  c=$(pwd)
+  d="python $c/test.py"
+  echo "while true; do\n
+  $d\n
+done
+exit 0" > "/etc/rc.local"
 }
 
 installScript () {
-	setupWifi
+  while true; do
+    read -p "What is your server's URL (for getting the scripts)?  " url
+    case $url in
+      * ) getScript "$url"; break;;
+    esac
+  done
 }
 
 echo "Welcome to the Colu Smart Door Installer Script!"

@@ -26,7 +26,7 @@ The code for the Raspberry Pi is written in Python and the server code is writte
  - 1x Electric door strike
  - A few jumper wires
  - Soldering Iron and Soldering Wire
- - A bit of technical 
+ - A bit of technical sense.
 
 ##First - the server
 So the server is written in NodeJS, which is in one of Heroku's native supported languages (which means that there's no need to install Node at all, which can sometimes be a pain in the ass).
@@ -83,6 +83,7 @@ This will redirect you to a new page with a big textfield. Inside of it, put the
 ```
 Then, click on the "Create and go back" button to create the document:
 
+###WIP - Admin sign up page
 
 Now we can set up the server for our door!
 
@@ -114,3 +115,9 @@ Then, to make the changes actually matter, you'll need to restart the server lik
 ![Heroku restart instance](https://www.evernote.com/shard/s471/sh/16d60f30-741f-475e-94b8-968d3763eef4/385d1aee0ac6f306/res/bfaa66bb-ed8a-4d76-b30f-4751fb81eaac/skitch.png?resizeSmall&width=832)
 
 Done! The server is live now! You can now access your door's control panel like this: `<your app's name here>.herokuapp.com`
+
+
+##Second - the hardware (Raspberry Pi)
+So the Pi's software is very very very easy to use. Since there's an installer script on your server, the hardest part is the connection of the hardware.
+
+####The elec. schematic

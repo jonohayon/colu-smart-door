@@ -34,10 +34,13 @@ class Door():
 
   def checkAvailable(self):
     while True:
-      r = request.get(self.doorHost + 'status')
-      if r.text == 'pending':
-        self.openDoor()
-      time.sleep(1)
+      try:
+        r = request.get(self.doorHost + 'status')
+        if r.text == 'pending':
+          self.openDoor()
+        time.sleep(1)
+      except ConnectionError, e:
+        raise e
 
   def verifyUser(self, userName):
     headers = { 'content-type': 'application/json' }
