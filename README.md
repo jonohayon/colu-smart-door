@@ -153,4 +153,4 @@ Now, if you've booted to the desktop, open the terminal. If not / you are using 
 
 From within the terminal, type: `wget http://smart-door.herokuapp.com/pi/installer -O install.sh`
 After it has been completed, type `sh install.sh` and follow the instructions on screen. What the script is doing is basically downloading the needed python scripts from your server and adding them to the Pi's queue for starting the scripts on every startup.
-After the script has finished, type `sudo reboot` and you're done! Now you have a fully-working smart door powered by the Blockchain!
+After the script has finished, type `nano test.py` and change `'smart-door'` to your appname (the part between `http://` and `.herokuapp.com`). Then, type `sudo reboot` and you're done! Now you have a fully-working smart door powered by the Blockchain!
