@@ -6,11 +6,15 @@
         <div class="md-list-item-text">
           <h3>{{ user.firstName }} {{ user.lastName }} <span ng-show="{{ user.type === 'admin' }}">(admin)</span></h3>
         </div>
+        <span flex></span>
+        <md-button ng-show="{{ user.type !== 'admin' }}" class="md-icon-button del" ng-click="deleteUser($event, user)" ng-mouseenter="delHover(true)" ng-mouseleave="delHover(false)" aria-label="close">
+          <md-icon md-svg-src="/svg/close-black.svg" aria-label="Close dialog"></md-icon>
+        </md-button>
       </md-list-item>
       <md-divider></md-divider>
     </div>
   </md-list>
-  <md-button class="md-fab" aria-label="Add user" ng-click="showAddUser()">
+  <md-button class="md-fab" aria-label="Add user" ng-click="showAddUser($event)">
     <md-icon md-svg-src="/svg/add.svg"></md-icon>
   </md-button>
 </div>

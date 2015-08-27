@@ -328,6 +328,18 @@ app.post('/api/login', function (req, res) {
   })
 })
 
+app.post('/api/delete_user', function (req, res) {
+  if (req.body && req.body !== {} && req.body !== null && req.body !== '' && req.body !== undefined) {
+    User.remove(req.body, function (err) {
+      if (err) {
+        res.status(500)
+        return res.send(err)
+      }
+      res.json({ message: 'Deleted ' + req.body.firstName + ' ' + req.body.lastName + ' from the DB', data: req.body })
+    })
+  }
+})
+
 /**
  * Verify Users route
  * Method: POST

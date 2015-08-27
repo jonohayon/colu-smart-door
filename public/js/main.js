@@ -72,19 +72,36 @@ app.controller('tableCtrl', function ($scope, $http, $mdDialog) {
       $scope.usersNum = data.length
     })
   }, 600000)
+  $scope.isDelHover = false
+  $scope.delHover = function (bool) {
+    console.log(bool)
+    $scope.isDelHover = bool
+    return bool
+  }
   $scope.showInfo = function (ev, user) {
-    userDetails = user
-    $mdDialog.show({
-      controller: userDialogCtrl,
-      templateUrl: 'templates/userDialog.html',
-      parent: angular.element(document.body),
-      targetEvent: ev
-    })
+    if (!$scope.isDelHover) {
+      userDetails = user
+      $mdDialog.show({
+        controller: userDialogCtrl,
+        templateUrl: 'templates/userDialog.html',
+        parent: angular.element(document.body),
+        targetEvent: ev
+      })
+    }
   }
   $scope.showAddUser = function (ev) {
     $mdDialog.show({
       controller: addUserCtrl,
       templateUrl: 'templates/addDialog.html',
+      parent: angular.element(document.body),
+      targetEvent: ev
+    })
+  }
+  $scope.deleteUser = function (ev, user) {
+    userDetails = user
+    $mdDialog.show({
+      controller: deleteDialogCtrl,
+      templateUrl: 'templates/deleteDialog.html',
       parent: angular.element(document.body),
       targetEvent: ev
     })
@@ -120,6 +137,21 @@ function userDialogCtrl ($scope, $mdDialog) {
   }
 }
 
+function deleteDialogCtrl ($scope, $mdDialog, $http) {
+  $scope.user = userDetails
+  $scope.message = 'Are you sure you want to delete ' + $scope.user.firstName + ' ' + $scope.user.lastName + '?'
+  $scope.hide = function () {
+    $mdDialog.hide()
+  }
+  $scope.deleteUser = function (user) {
+    $http.post('/api/delete_user?token=' + sessionStorage.adminToken, user).success(function (data, status, headers, config) {
+      if (data.message === 'Deleted ' + user.firstName + ' ' + user.lastName + ' from the DB') {
+        $scope.message = 'Deleted ' + user.firstName + ' ' + user.lastName + ' from the DB'
+      }
+    })
+  }
+}
+
 function addUserCtrl ($scope, $mdDialog, $http) {
   $scope.hide = function () {
     $mdDialog.hide()
@@ -147,8 +179,11 @@ function addUserCtrl ($scope, $mdDialog, $http) {
 }
 
 function loadingCtrl ($scope, $http, $mdDialog) {
+  $scope.cancel = function () {
+    $mdDialog.close()
+  }
   $http.post('/api/login', { userName: userDetails.firstName + ' ' + userDetails.lastName }).success(function (data, status, headers, config) {
     console.log(data)
-    $mdDialog.hide()
+    $mdDialog.close()
   })
 }
