@@ -300,7 +300,13 @@ app.post('/api/adlog', function (req, res) {
 app.post('/api/login', function (req, res) {
   var body = req.body
   var date = new Date()
-  User.findOne({ firstName: body.userName.split(' ')[0], lastName: body.userName.split(' ')[1] }, function (err, user) {
+  var data
+  data.assetId = body.assetId
+  if (body.userName) {
+    data.firstName = body.userName.split(' ')[0]
+    data.lastName = body.userName.split(' ')[1]
+  }
+  User.findOne(data, function (err, user) {
     if (err) return res.send(err, 500)
     var userName = user.firstName + ' ' + user.lastName
     console.log(user)
