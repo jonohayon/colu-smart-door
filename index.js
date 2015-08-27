@@ -438,7 +438,8 @@ mongoose.connection.on('open', function () {
         network: 'mainnet',
         privateSeed: process.env.PRIVATE_SEED,
         companyName: 'Smart Door',
-        apiKey: process.env.API_KEY
+        apiKey: process.env.API_KEY,
+        issuerHomepage: process.env.ISSUE_URL || null
       }
       if (!colu_settings.privateSeed) {
         System.findOne({userName: 'coluadmin'}, function (err, system) {
