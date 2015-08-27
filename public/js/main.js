@@ -182,8 +182,10 @@ function loadingCtrl ($scope, $http, $mdDialog) {
   $scope.cancel = function () {
     $mdDialog.cancel()
   }
-  $http.post('/api/login', { userName: userDetails.firstName + ' ' + userDetails.lastName }).success(function (data, status, headers, config) {
-    console.log(data)
-    $mdDialog.cancel()
-  })
+  setTimeout(function () {
+    $http.post('/api/login', { userName: userDetails.firstName + ' ' + userDetails.lastName }).success(function (data, status, headers, config) {
+      console.log(data)
+      $mdDialog.cancel()
+    })
+  }, 5000)
 }
