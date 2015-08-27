@@ -25,7 +25,7 @@ The code for the Raspberry Pi is written in Python and the server code is writte
  - Raspberry Pi
  - SD Card for the Raspberry Pi (a regular one, not microSD)
  - 1x P2N2222A Transistor
- - 1x Relay ([this one]())
+ - 1x Relay (something like [this one](http://www.ebay.com/itm/Panasonic-JS1-12V-F-JS1-12V-POWER-RELAY-10A-12VDC-x-1PC-/160707268918))
  - 1x Electric door strike
  - A few jumper wires
  - Soldering Iron and Soldering Wire
