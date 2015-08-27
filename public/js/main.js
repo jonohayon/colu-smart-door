@@ -180,7 +180,7 @@ function addUserCtrl ($scope, $mdDialog, $http) {
 
 function loadingCtrl ($scope, $http, $mdDialog) {
   $scope.cancel = function () {
-    $mdDialog.close()
+    $mdDialog.cancel()
   }
   $http.post('/api/login', { userName: userDetails.firstName + ' ' + userDetails.lastName }).success(function (data, status, headers, config) {
     console.log(data)
