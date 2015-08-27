@@ -184,6 +184,6 @@ function loadingCtrl ($scope, $http, $mdDialog) {
   }
   $http.post('/api/login', { userName: userDetails.firstName + ' ' + userDetails.lastName }).success(function (data, status, headers, config) {
     console.log(data)
-    $mdDialog.close()
+    $mdDialog.cancel()
   })
 }
