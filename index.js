@@ -300,7 +300,7 @@ app.post('/api/adlog', function (req, res) {
 app.post('/api/login', function (req, res) {
   var body = req.body
   var date = new Date()
-  var data
+  var data = {}
   data.assetId = body.assetId
   if (body.userName) {
     data.firstName = body.userName.split(' ')[0]
