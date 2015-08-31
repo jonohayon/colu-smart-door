@@ -47,6 +47,32 @@ function getOneAdminToken (username, cb) {
   })
 }
 
+function createMetadata () {
+  var beaconUUID = process.env.BEACON_UUID
+  var beaconMajor = process.env.BEACON_MAJOR
+  var beaconMinor = process.env.BEACON_MINOR
+  var loginURL = process.env.LOGIN_URL
+  var loginMethod = process.env.LOGIN_METHOD
+  var loginParam = process.env.LOGIN_PARAM
+  if (beaconUUID && beaconMajor && beaconMinor && loginURL && loginMethod && loginParam) {
+    var obj = {
+      beacon: {
+        uuid: beaconUUID,
+        major: beaconMajor,
+        minor: beaconMinor
+      },
+      url: {
+        url: loginURL,
+        method: loginMethod,
+        params: [loginParam]
+      }
+    }
+    return  { type: 'beacon', data: JSON.stringify(obj) }
+  } else {
+    return { type: 'URL', data: process.env.ISSUE_URL }
+  }
+}
+
 var userSchema = new mongoose.Schema({
   firstName: String,
   lastName: String,
@@ -430,12 +456,13 @@ mongoose.connection.on('open', function () {
     getOneAdminToken(admin.username, function (err, token) {
       if (err) throw err
       console.log('Admin token(s):', token)
+      var metadata = createMetadata()
       var colu_settings = {
         network: 'mainnet',
         privateSeed: process.env.PRIVATE_SEED,
         companyName: 'Smart Door',
         apiKey: process.env.API_KEY,
-        issuerHomepage: process.env.ISSUE_URL || null
+        issuerHomepage: metadata.data || null
       }
       if (!colu_settings.privateSeed) {
         System.findOne({userName: 'coluadmin'}, function (err, system) {
