@@ -89,23 +89,21 @@ app.use('/api/:route', function (req, res, next) {
       if (err) { res.status(500); return res.send(err) }
       if (!req.query.token) {
         res.status(400)
-        res.send({ message: 'A token is required' })
-        res.end()
+        return res.send({ message: 'A token is required' })
       } else {
         for (var i in tokenArray) {
           var token = tokenArray[i]
           if (req.query.token === token) {
-            next()
+            return next()
           } else {
             res.status(401)
-            res.send({ message: 'You need to be authorized to see this page' })
-            res.end()
+            return res.send({ message: 'You need to be authorized to see this page' })
           }
         }
       }
     })
   } else {
-    next()
+    return next()
   }
 })
 
@@ -114,16 +112,15 @@ app.use('/qr', function (req, res, next) {
     if (err) { res.status(500); return res.send(err) }
     if (!req.query.token) {
       res.redirect('/')
-      res.end()
+      return res.end()
     } else {
       for (var i in tokenArray) {
         var token = tokenArray[i]
         if (req.query.token === token) {
-          next()
+          return next()
         } else {
           res.status(401)
-          res.send({ message: 'You need to be authorized to see this page' })
-          res.end()
+          return res.send({ message: 'You need to be authorized to see this page' })
         }
       }
     }
@@ -140,11 +137,10 @@ app.use('/list', function (req, res, next) {
       for (var i in tokenArray) {
         var token = tokenArray[i]
         if (req.query.token === token) {
-          next()
+          return next()
         } else {
           res.status(401)
-          res.send({ message: 'You need to be authorized to see this page' })
-          res.end()
+          return res.send({ message: 'You need to be authorized to see this page' })
         }
       }
     }
@@ -154,7 +150,7 @@ app.use('/list', function (req, res, next) {
 app.get('/api/status', function (req, res) {
   if (status === 'pending') {
     status = 'open'
-    setTimeout(function () {status = 'closed'}, 5000)
+    setTimeout(function () { status = 'closed' }, 5000)
     return res.send('pending')
   }
   return res.send(status)
