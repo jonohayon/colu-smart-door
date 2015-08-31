@@ -55,6 +55,8 @@ app.controller('loginCtrl', function ($scope, $http) {
           sessionStorage.adminToken = data.token
           window.location.href = '/list?token=' + sessionStorage.adminToken
         }
+      }).error(function (data, status, headers, config) {
+        alert('There was an error while trying to log you in (status: ' + status + ').')
       })
     }
   }
@@ -185,5 +187,7 @@ function loadingCtrl ($scope, $http, $mdDialog) {
   $http.post('/api/login', { userName: userDetails.firstName + ' ' + userDetails.lastName }).success(function (data, status, headers, config) {
     console.log(data)
     $mdDialog.cancel()
+  }).error(function (data, status, headers, config) {
+    alert('There was an error while trying to log you in (status: ' + status + ').')
   })
 }
