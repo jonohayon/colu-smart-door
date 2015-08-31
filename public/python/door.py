@@ -7,10 +7,14 @@ import RPi.GPIO as GPIO
 import requests as request
 import time
 import json
+import yaml
+
+configFile = open('./config.yml', 'r').read()
 
 class Door():
-  def __init__(self, appname):
-    self.doorHost = 'http://' + appname + '.herokuapp.com/api/'
+  def __init__(self):
+    self.appname = yaml.load(configFile)['appname']
+    self.doorHost = 'http://' + self.appname + '.herokuapp.com/api/'
     self.gpioVersion = GPIO.VERSION
     self.bcmDoorPin = 23
     self.physicalDoorPin = 16
