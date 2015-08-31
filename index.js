@@ -67,7 +67,7 @@ function createMetadata () {
         params: [loginParam]
       }
     }
-    return  { type: 'beacon', data: JSON.stringify(obj) }
+    return { type: 'beacon', data: JSON.stringify(obj) }
   } else {
     return { type: 'URL', data: process.env.ISSUE_URL }
   }
