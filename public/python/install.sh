@@ -5,15 +5,15 @@
 ####################################
 
 getScript () {
-  curl -O "https://raw.github.com/pypa/pip/master/contrib/get-pip.py"
+  curl -O --silent "https://raw.github.com/pypa/pip/master/contrib/get-pip.py"
   python "get-pip.py"
   pip install rpi.gpio
   pip install requests
   pip install pyyaml
   a="http://smartdoor-colu.elasticbeanstalk.com/pi/py"
-  curl -o "door.py" $a
+  curl -o "door.py" --silent $a
   b="http://smartdoor-colu.elasticbeanstalk.com/pi/py2"
-  curl -o "test.py" $b
+  curl -o "test.py" --silent $b
   c=$(pwd)
   d="python $c/test.py"
   echo "while true; do
