@@ -152,6 +152,5 @@ All of the code is hosted on your repository, so let's get it from there and ins
 
 Now, if you've booted to the desktop, open the terminal. If not / you are using SSH, you're already in the terminal!
 
-From within the terminal, type: `wget http://smart-door.herokuapp.com/pi/installer -O install.sh`
-After it has been completed, type `sh install.sh` and follow the instructions on screen. What the script is doing is basically downloading the needed python scripts from your server and adding them to the Pi's queue for starting the scripts on every startup.
-After the script has finished, type `nano test.py` and change `'smart-door'` to your appname (the part between `http://` and `.herokuapp.com`). Then, type `sudo reboot` and you're done! Now you have a fully-working smart door powered by the Blockchain!
+From within the terminal, type: `curl -o install.sh http://smartdoor-colu.elasticbeanstalk.com/pi/installer`
+After it has been completed, type `sudo sh install.sh` and follow the instructions on screen. What the script is doing is basically downloading the needed python scripts from your server and adding them to the Pi's queue for starting the scripts on every startup, asking for your Heroku appname (the part between `http://` and `.herokuapp.com`) for the python script, and reboots the pi. After you've ran the script, you're done! Now you have a fully-working smart door powered by the Blockchain!
