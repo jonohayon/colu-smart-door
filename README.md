@@ -1,5 +1,4 @@
-Colu Smart Door
----
+#Colu Smart Door
 
 ####Disclaimer
 Although most of it is finished, this guide is still WIP, so it's not complete yet and there might be some broken links.
