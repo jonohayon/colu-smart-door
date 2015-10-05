@@ -124,6 +124,10 @@ function deleteDialogCtrl ($scope, $mdDialog, $http) {
     $http.post('/api/delete_user?token=' + sessionStorage.adminToken, user).success(function (data, status, headers, config) {
       if (data.message === 'Deleted ' + user.firstName + ' ' + user.lastName + ' from the DB') {
         $scope.message = 'Deleted ' + user.firstName + ' ' + user.lastName + ' from the DB'
+        setTimeout(function () {
+          $mdDialog.hide()
+          window.location.reload()
+        }, 2000)
       }
     })
   }
@@ -160,7 +164,7 @@ function loadingCtrl ($scope, $http, $mdDialog) {
   $scope.cancel = function () {
     $mdDialog.cancel()
   }
-  $http.post('/api/login', { userName: userDetails.firstName + ' ' + userDetails.lastName }).success(function (data, status, headers, config) {
+  $http.post('/api/login', { userName: userDetails.firstName + ' ' + userDetails.lastName, assetId: userDetails.assetId}).success(function (data, status, headers, config) {
     console.log(data)
     $mdDialog.cancel()
   }).error(function (data, status, headers, config) {

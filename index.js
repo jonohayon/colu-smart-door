@@ -7,11 +7,11 @@ var path = require('path')
 var fs = require('fs')
 var app = express()
 var status = 'closed'
-var dbUser = process.env.DB_USER || 'money'
-var dbPass = process.env.DB_PASS || 'ipod1234'
-var dbURI = process.env.DB_URI || 'mongodb://ds029338.mongolab.com:29338/smart_door_db'
+var dbUser = process.env.DB_USER
+var dbPass = process.env.DB_PASS
+var dbURI = process.env.DB_URI
 var PRIVATE_SEED = process.env.PRIVATE_SEED
-var API_KEY = process.env.API_KEY || 'eyJ0eXAiOKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJ0aGVob2JiaXQ4NUBnbWFpbC5jb20iLCJleHAiOiIyMDE1LTEwLTAzVDE2OjU0OjUwLjM0NloiLCJ0eXBlIjoiYXBpX2tleSJ9.RHpxJtUpHLqRsaWDJTgXTpxTh3JUkxCV14M-BDGxptM'
+var API_KEY = process.env.API_KEY
 var PORT = process.env.PORT || 5000
 var coluAccess
 var options = {
@@ -34,19 +34,29 @@ var options = {
 function getAdminTokens (cb) {
   var arr = []
   User.find({ type: 'admin' }, function (err, admins) {
-    if (err) return cb(err)
-    for (var i in admins) {
-      var admin = admins[i]
-      arr.push(SHA1(admin.assetId + admin._id))
+    if (admins) {
+      if (err) return cb(err)
+      for (var i in admins) {
+        var admin = admins[i]
+        arr.push(SHA1(admin.assetId + admin._id))
+      }
+      cb(null, arr)
+    } else {
+      err = new Error('Not an admin :(')
+      cb(err, null)
     }
-    cb(null, arr)
   })
 }
 
 function getOneAdminToken (username, cb) {
   User.findOne({ type: 'admin', username: username }, function (err, admin) {
     if (err) return cb(err)
-    cb(null, SHA1(admin.assetId + admin._id))
+    if (admin) {
+      cb(null, SHA1(admin.assetId + admin._id))
+    } else {
+      err = new Error('Not an admin :(')
+      cb(err, null)
+    }
   })
 }
 
@@ -78,19 +88,18 @@ function createMetadata () {
 
 function tokenMiddleware (req, res, next) {
   getAdminTokens(function (err, tokenArray) {
-    if (err) { res.status(500); return res.send(err) }
+    if (err) { console.log(err); res.status(500); return res.send(err) }
     if (!req.query.token) {
       res.status(400)
       return res.send({ message: 'A token is required' })
     } else {
-      for (var i in tokenArray) {
-        var token = tokenArray[i]
-        if (req.query.token === token) {
-          return next()
-        } else {
-          res.status(401)
-          return res.send({ message: 'You need to be authorized to see this page' })
-        }
+      if (tokenArray.indexOf(req.query.token) !== -1) {
+        console.log(tokenArray.indexOf(req.query.token) !== -1)
+        return next()
+      } else {
+        console.log(tokenArray.indexOf(req.query.token) !== -1)
+        res.status(401)
+        return res.send({ message: 'You need to be authorized to see this page' })
       }
     }
   })
@@ -281,7 +290,8 @@ app.get('/api/get_users', function (req, res) {
 app.post('/api/adlog', function (req, res) {
   var body = req.body
   console.log(body)
-  User.findOne({ username: body.username }, function (err, admin) {
+  User.findOne({ username: body.username, type: 'admin' }, function (err, admin) {
+    console.log(admin)
     if (err) {
       res.status(500)
       return res.send(err)
@@ -323,6 +333,7 @@ app.post('/api/login', function (req, res) {
     data.firstName = body.userName.split(' ')[0]
     data.lastName = body.userName.split(' ')[1]
   }
+  console.log(data)
   User.findOne(data, function (err, user) {
     if (err) return res.send(err, 500)
     var userName = user.firstName + ' ' + user.lastName
@@ -430,7 +441,7 @@ app.post('/api/signup', function (req, res) {
       phone: body.user.phone,
       email: body.user.email,
       type: body.user.type,
-      username: body.user.username,
+      username: body.user.username || body.user.firstName + ' ' + body.user.lastName,
       assetId: data.assetId
     }
     User.update(form, form, { upsert: true }, function (err, user) {
