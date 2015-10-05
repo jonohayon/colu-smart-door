@@ -26,6 +26,11 @@
         <label>Email Address</label>
         <input ng-model="email" type="email" />
       </md-input-container>
+      <md-input-container flex>
+        <md-checkbox ng-model="type">
+          Admin
+        </md-checkbox>
+      </md-input-container>
     </div>
     <div class="qrCode" ng-show="isQr">
       <h3 flex>Scan this QR code to add you to the smart door control panel</h3>

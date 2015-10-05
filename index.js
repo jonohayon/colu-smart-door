@@ -7,9 +7,12 @@ var path = require('path')
 var fs = require('fs')
 var app = express()
 var status = 'closed'
-var dbUser = process.env.DB_USER
-var dbPass = process.env.DB_PASS
-var dbURI = process.env.DB_URI
+var dbUser = process.env.DB_USER || 'money'
+var dbPass = process.env.DB_PASS || 'ipod1234'
+var dbURI = process.env.DB_URI || 'mongodb://ds029338.mongolab.com:29338/smart_door_db'
+var PRIVATE_SEED = process.env.PRIVATE_SEED
+var API_KEY = process.env.API_KEY || 'eyJ0eXAiOKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJ0aGVob2JiaXQ4NUBnbWFpbC5jb20iLCJleHAiOiIyMDE1LTEwLTAzVDE2OjU0OjUwLjM0NloiLCJ0eXBlIjoiYXBpX2tleSJ9.RHpxJtUpHLqRsaWDJTgXTpxTh3JUkxCV14M-BDGxptM'
+var PORT = process.env.PORT || 5000
 var coluAccess
 var options = {
   server: {
@@ -73,6 +76,26 @@ function createMetadata () {
   }
 }
 
+function tokenMiddleware (req, res, next) {
+  getAdminTokens(function (err, tokenArray) {
+    if (err) { res.status(500); return res.send(err) }
+    if (!req.query.token) {
+      res.status(400)
+      return res.send({ message: 'A token is required' })
+    } else {
+      for (var i in tokenArray) {
+        var token = tokenArray[i]
+        if (req.query.token === token) {
+          return next()
+        } else {
+          res.status(401)
+          return res.send({ message: 'You need to be authorized to see this page' })
+        }
+      }
+    }
+  })
+}
+
 var userSchema = new mongoose.Schema({
   firstName: String,
   lastName: String,
@@ -107,68 +130,33 @@ app.use(function (req, res, next) {
   next()
 })
 app.use('/api/:route', function (req, res, next) {
-  if (req.params.route !== 'adlog' &&
+  if (req.params.route === 'get_qr' || req.params.route === 'signup') {
+    console.log('Route:', req.params.route)
+    User.findOne({ type: 'admin' }, function (err, admin) {
+      if (err) { res.status(500); return res.send(err) }
+      if (admin) {
+        tokenMiddleware(req, res, next)
+      } else {
+        return next()
+      }
+    })
+  } else if (req.params.route !== 'adlog' &&
       req.params.route !== 'get_users' &&
       req.params.route !== 'login' &&
       req.params.route !== 'status') {
-    getAdminTokens(function (err, tokenArray) {
-      if (err) { res.status(500); return res.send(err) }
-      if (!req.query.token) {
-        res.status(400)
-        return res.send({ message: 'A token is required' })
-      } else {
-        for (var i in tokenArray) {
-          var token = tokenArray[i]
-          if (req.query.token === token) {
-            return next()
-          } else {
-            res.status(401)
-            return res.send({ message: 'You need to be authorized to see this page' })
-          }
-        }
-      }
-    })
+    tokenMiddleware(req, res, next)
   } else {
     return next()
   }
 })
 
-app.use('/qr', function (req, res, next) {
-  getAdminTokens(function (err, tokenArray) {
-    if (err) { res.status(500); return res.send(err) }
-    if (!req.query.token) {
-      res.redirect('/')
-      return res.end()
-    } else {
-      for (var i in tokenArray) {
-        var token = tokenArray[i]
-        if (req.query.token === token) {
-          return next()
-        } else {
-          res.status(401)
-          return res.send({ message: 'You need to be authorized to see this page' })
-        }
-      }
-    }
-  })
-})
-
 app.use('/list', function (req, res, next) {
-  getAdminTokens(function (err, tokenArray) {
+  User.findOne({ type: 'admin' }, function (err, admin) {
     if (err) { res.status(500); return res.send(err) }
-    if (!req.query.token) {
-      res.redirect('/')
-      res.end()
+    if (admin) {
+      tokenMiddleware(req, res, next)
     } else {
-      for (var i in tokenArray) {
-        var token = tokenArray[i]
-        if (req.query.token === token) {
-          return next()
-        } else {
-          res.status(401)
-          return res.send({ message: 'You need to be authorized to see this page' })
-        }
-      }
+      return next()
     }
   })
 })
@@ -195,7 +183,7 @@ app.get('/admin', function (req, res) {
  * Method: GET
  */
 app.get('/qr', function (req, res) {
-  res.render('index', { route: fs.readFileSync(path.join(__dirname, 'templates/qr.html')).toString() })
+  res.render('index', { route: fs.readFileSync(path.join(__dirname, 'templates/addDialog.html')).toString() })
 })
 
 /**
@@ -211,7 +199,14 @@ app.get('/list', function (req, res) {
  * Method: GET
 */
 app.get('/', function (req, res) {
-  res.render('index', { route: fs.readFileSync(path.join(__dirname, 'templates/intercom.html')).toString() })
+  User.findOne({ type: 'admin' }, function (err, admin) {
+    if (err) { res.status(500); return res.send(err) }
+    if (admin) {
+      return res.render('index', { route: fs.readFileSync(path.join(__dirname, 'templates/intercom.html')).toString() })
+    } else {
+      return res.redirect('/list')
+    }
+  })
 })
 
 /**
@@ -445,27 +440,35 @@ app.post('/api/signup', function (req, res) {
   })
 })
 
+var coluInit = function (coluAccess) {
+  coluAccess.init(function () {
+    console.log('ColuAccess initialized with seed:', coluAccess.colu.hdwallet.getPrivateSeed())
+    app.listen(PORT, function () {
+      console.log('Listening on port', PORT)
+    })
+  })
+}
+
 mongoose.connection.on('open', function () {
   console.log('Connected to DB')
-  User.findOne({
-    type: 'admin'
-  }, function (err, admin) {
-    if (err) throw err
+  User.findOne({ type: 'admin' }, function (err, admin) {
+    if (err) {
+      console.log(err.message)
+      throw err
+    }
     console.log('Admin found in DB, continuing...')
     console.log(admin)
-    getOneAdminToken(admin.username, function (err, token) {
-      if (err) throw err
-      console.log('Admin token(s):', token)
+    var end = function () {
       var metadata = createMetadata()
       var colu_settings = {
         network: 'mainnet',
-        privateSeed: process.env.PRIVATE_SEED,
+        privateSeed: PRIVATE_SEED,
         companyName: 'Smart Door',
-        apiKey: process.env.API_KEY,
+        apiKey: API_KEY,
         issuerHomepage: metadata.data || null
       }
       if (!colu_settings.privateSeed) {
-        System.findOne({userName: 'coluadmin'}, function (err, system) {
+        System.findOne({ userName: 'coluadmin' }, function (err, system) {
           if (err) return console.log(err)
           if (system && system.privateSeed) colu_settings.privateSeed = system.privateSeed
           if (!system) system = new System({userName: 'coluadmin'})
@@ -473,24 +476,24 @@ mongoose.connection.on('open', function () {
           system.privateSeed = coluAccess.colu.hdwallet.getPrivateSeed()
           system.save(function (err) {
             if (err) return console.log(err)
-            coluAccess.init(function () {
-              console.log('ColuAccess initialized with seed:', coluAccess.colu.hdwallet.getPrivateSeed())
-              app.listen(process.env.PORT || 5000, function () {
-                console.log('Listening on port', process.env.PORT || 5000)
-              })
-            })
+            coluInit(coluAccess)
           })
         })
       } else {
         coluAccess = new ColuAccess(colu_settings)
-        coluAccess.init(function () {
-          console.log('ColuAccess initialized with seed:', coluAccess.colu.hdwallet.getPrivateSeed())
-          app.listen(process.env.PORT || 5000, function () {
-            console.log('Listening on port', process.env.PORT || 5000)
-          })
-        })
+        coluInit(coluAccess)
       }
-    })
+    }
+    if (admin) {
+      getOneAdminToken(admin.username, function (err, token) {
+        if (err) throw err
+        console.log('Admin token(s):', token)
+        end()
+      })
+    } else {
+      console.log('Setting redirect from / to /qr...')
+      end()
+    }
   })
 })
 

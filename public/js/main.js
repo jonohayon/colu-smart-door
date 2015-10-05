@@ -1,31 +1,6 @@
 var app = angular.module('smartDoor', ['ngMaterial'])
 var userDetails
 
-// Use in case of emergency
-app.controller('qrCtrl', function ($scope, $http) {
-  $scope.register = function () {
-    $scope.form = {
-      firstName: $scope.firstName,
-      lastName: $scope.lastName,
-      phone: $scope.phoneNumber,
-      email: $scope.email,
-      username: $scope.username,
-      type: $scope.type
-    }
-    $http.post('/api/get_qr?token=' + sessionStorage.adminToken, $scope.form).success(function (data, status, headers, config) {
-      $scope.qrCode = data.base64data
-      $http.post('/api/signup?token=' + sessionStorage.adminToken, { regMsg: data.regMsg, code: data.code, user: data.user }).success(function (data, status, headers, config) {
-        console.log(data)
-      })
-    })
-  }
-  $scope.login = function () {
-    $http.post('/api/login', { userName: $scope.firstName + ' ' + $scope.lastName }).success(function (data, status, headers, config) {
-      console.log(data)
-    })
-  }
-})
-
 app.controller('navCtrl', function ($scope, $http) {
   var route = window.location.pathname.replace('/', '')
   $scope.isList = false
@@ -160,12 +135,13 @@ function addUserCtrl ($scope, $mdDialog, $http) {
   }
   $scope.addUser = function () {
     $scope.isDone = false
+    var type = $scope.type ? 'admin' : 'user'
     $scope.form = {
       firstName: $scope.firstName,
       lastName: $scope.lastName,
       phone: $scope.phoneNumber,
       email: $scope.email,
-      type: 'user'
+      type: type
     }
     $http.post('/api/get_qr?token=' + sessionStorage.adminToken, $scope.form).success(function (data, status, headers, config) {
       $scope.isQr = true
