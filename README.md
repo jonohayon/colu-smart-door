@@ -135,7 +135,7 @@ FYI (and important) - this is a pushbutton representation (just the red lines, n
 as for now, you can ignore it, there's no need for it at the moment.
 
 ####What should I do with those schematics?
-Basically, after you've gathered all of the required parts, just solder them together accroding to the green lines in the shcematic (those are representation of wires).
+Basically, after you've gathered all of the required parts, just solder them together accroding to the green lines in the shcematic (those are representations of wires).
 
 After you've done this, we're now ready to install all of the software!
 
