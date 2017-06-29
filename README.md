@@ -1,24 +1,24 @@
-#Colu Smart Door
+# Colu Smart Door
 
-####Disclaimer
+#### Disclaimer
 Although most of it is finished, this guide is still WIP, so it's not complete yet and there might be some broken links.
 If you find any mistakes in code / english / anything else, please open an issue about it.
 
-####What is this thing?
+#### What is this thing?
 The colu smart door project is literally, a smart door powered by the Colu platform.
 
-####What is Colu?
+#### What is Colu?
 [Colu](http://colu.co) is an Israel-based startup aimed at digitizing the ownership of all your things through the blockchain — the public feed of Bitcoin transactions. The service provides an easy way to use the blockchain technology, originally meant for Bitcoin transactions, for anything, from cars, to art, to concert tickets.
 
-####Where do I sign up?
+#### Where do I sign up?
 There's no need to sign up, just follow the tutorial!
 
-#Tutorial
+# Tutorial
 
-####Before we start...
+#### Before we start...
 The code for the Raspberry Pi is written in Python and the server code is written in NodeJS. There's no need to install neither of them (if you deploy to Heroku and not to your VPS or something else) because Heroku will install Node for you and Python is already on the Pi.
 
-####Requirments
+#### Requirments
 
  - Colu API key (you can get one [here](http://colu.co/getapikey))
  - Raspberry Pi
@@ -30,14 +30,14 @@ The code for the Raspberry Pi is written in Python and the server code is writte
  - Soldering Iron and Soldering Wire
  - A bit of technical sense.
 
-##First - the server
+## First - the server
 So the server is written in NodeJS, which is in one of Heroku's native supported languages (which means that there's no need to install Node at all, which can sometimes be a pain in the ass).
 Deploying the server to Heroku is easy as clicking a button which will let you deploy the script to a new Heroku app. The only parts that are needed configuration are some environment variables (read more [here](https://en.wikipedia.org/wiki/Environment_variable)) for the database (MongoDB, btw), called *DB_URI*, *DB_USER* and *DB_PASS*. Some other environment variables that needs to be declared are the *API_KEY* and the *PRIVATE_SEED* (an optional one), for the Colu Access module.
 
 For the database, I would recommend using [Mongolab](http://mongolab.com), since it gives you free 500MB of DB storage for your needs (it's good for about 10 users I guess, but for more than that I would recommend to buy a bigger DB).
 
-###Configuring the server
-####1. DB (Mongolab)
+### Configuring the server
+#### 1. DB (Mongolab)
 Click on the "GET 500MB FREE" button:
 ![Mogolab main screen](https://www.evernote.com/shard/s471/sh/e490ae5b-3c8a-43be-873b-d12cc9ea7928/cb4486415b40b535/res/f6e7badb-5aba-4e38-8f22-e1c52b440c49/skitch.png?resizeSmall&width=832)
 
@@ -85,11 +85,11 @@ This will redirect you to a new page with a big textfield. Inside of it, put the
 ```
 Then, click on the "Create and go back" button to create the document:
 
-###WIP - Admin sign up page
+### WIP - Admin sign up page
 
 Now we can set up the server for our door!
 
-####Server (Heroku)
+#### Server (Heroku)
 
 For this part, you will need an Heroku account. You can sign up [here](http://heroku.com).
 
@@ -119,10 +119,10 @@ Then, to make the changes actually matter, you'll need to restart the server lik
 Done! The server is live now! You can now access your door's control panel like this: `<your app's name here>.herokuapp.com`
 
 
-##Second - the hardware (Raspberry Pi)
+## Second - the hardware (Raspberry Pi)
 So the Pi's software is very very very easy to use. Since there's an installer script on your server, the hardest part is the connection of the hardware.
 
-####The elec. schematic
+#### The elec. schematic
 ![RasPi Elec. Schematic](http://i.imgur.com/pl3OGOc.png)
 
 And now with marks of each part:
@@ -134,19 +134,19 @@ FYI (and important) - this is a pushbutton representation (just the red lines, n
 
 as for now, you can ignore it, there's no need for it at the moment.
 
-####What should I do with those schematics?
+#### What should I do with those schematics?
 Basically, after you've gathered all of the required parts, just solder them together accroding to the green lines in the shcematic (those are representations of wires).
 
 After you've done this, we're now ready to install all of the software!
 
-####Install the OS and setup internet connection
+#### Install the OS and setup internet connection
 For installing the OS - Adafruit has a great article [here](https://learn.adafruit.com/adafruit-raspberry-pi-lesson-1-preparing-and-sd-card-for-your-raspberry-pi/overview).
 
 For internet - I would recommend using WiFi (a tutorial on how to set it up [here](https://learn.adafruit.com/adafruits-raspberry-pi-lesson-3-network-setup/setting-up-wifi-with-occidentalis), again from the great Adafriut), but you can use Ethernet as well from model B and above (just plug the cable :P)
 
 After setting both of these up, we're ready to get started with the code!
 
-####Getting the code
+#### Getting the code
 All of the code is hosted on your repository, so let's get it from there and install it onto the Pi!
 
 Now, if you've booted to the desktop, open the terminal. If not / you are using SSH, you're already in the terminal!
