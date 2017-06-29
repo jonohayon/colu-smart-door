@@ -56,7 +56,7 @@ Then, set the DB's name and submit the form:
 On the DB page, go to the "Users" tab and click on "Add databse user":
 ![Mongolab add new user #1](https://www.evernote.com/shard/s471/sh/9d6011a2-b8ca-486a-add6-47e30435802a/d2fda13ab75c4156/res/c9362564-ba4c-4cc8-99cf-91dff812a672/skitch.png?resizeSmall&width=832)
 
-Then, fill the form with the desired user credentials and click on the "Create" button (save the credentials for later use, you will need them):
+Then, fill the form with the desired user credentials and click on the "Create" button (save the credentials for later use, you will need them):<br />
 ![Mongolab add new user #2](https://www.evernote.com/shard/s471/sh/3e8ff840-67f3-4c39-ac89-ace9f8433e67/12ac751de8f919bc/res/eff51a5a-41da-4e37-9da0-6229a7eea8c9/skitch.png?resizeSmall&width=832)
 
 Then, get the DB url from the page:
